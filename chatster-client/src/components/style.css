@@ -1,0 +1,90 @@
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+    border-color: transparent;
+    box-shadow: none;
+    outline: 0 none;
+}
+
+.backgroundColor {
+    background-color: #3A7D33;
+}
+
+.chatBarBackgroundColor {
+    background-color: #3a7d33e8;
+}
+
+.hoverEffect:hover {
+    background-color: #3a7d334b;
+    transition-duration: 0.5s;
+}
+
+.hoverEffect {
+    transition-duration: 0.5s;
+}
+
+.messagesListHeight {
+    min-height: 80vh;
+    margin-top: -5px;
+}
+
+.sendMessageHeight {
+    min-height: 12.2vh;
+}
+
+.textLeft {
+    text-align: left;
+}
+
+.navBarImage{
+    width: 10%;
+}
+
+.appName {
+    color: #3A7D33;
+    text-transform: uppercase;
+    letter-spacing: 1rem;
+    font-weight: bolder;
+}
+
+.welcome {
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.sender {
+    background-color: #3a7d33dc;
+    color: white;
+    width: 55%;
+    float: right;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.reciever {
+    background-color: #3a7d335e;
+    color: black;
+    border-radius: 10px;
+    text-align: left;
+    width: 55%;
+    float: left;
+    padding: 10px;
+    margin: 10px;
+}

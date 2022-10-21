@@ -1,0 +1,19 @@
+.imageSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.chatPage {
+    display: flex;
+}
+
+.sideBarSection {
+    height: 100vh;
+    width: 20%;
+    background-color: rgb(97, 97, 97);
+}
+
+.chatSection {
+    height: 100vh;
+    width: 80%;
+}

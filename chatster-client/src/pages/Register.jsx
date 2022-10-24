@@ -5,11 +5,7 @@ import { styled } from '@mui/material/styles';
 import CONSTANTS from '../constants';
 import './style.css'
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, db, storage } from '../firebase'
 import { toast } from 'react-toastify';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore";
 import UserService from '../services/userService';
 
 const Register = () => {
@@ -57,35 +53,14 @@ const Register = () => {
         if (!validUser) {
             toast.error(CONSTANTS.PASSWORD_NOT_SAME)
         } else {
-            const displayName = newUser.name
-            const photoURL = newUser.imageURL
-            const { email, password } = newUser
-            // const res = await createUserWithEmailAndPassword(auth, email, password)
-            // const date = new Date().getTime();
-            // const storageRef = ref(storage, `${displayName + date}`);
             try {
-                // await uploadBytesResumable(storageRef, photoURL).then(() => {
-                //     getDownloadURL(storageRef).then(async (downloadURL) => {
-                //         await updateProfile(res.user, {
-                //             displayName,
-                //             photoURL: downloadURL
-                //         })
-                //         await setDoc(doc(db, CONSTANTS.USERS_SCHEMA, res.user.uid), {
-                //             uid: res.user.uid,
-                //             displayName,
-                //             email,
-                //             photoURL: downloadURL,
-                //         });
-                //         await setDoc(doc(db, CONSTANTS.USER_CHATS_SCHEMA, res.user.uid), {})
-                //     })
-                // });
                 UserServiceObj.registerNewUser({
                     displayName: newUser.name,
                     email: newUser.email,
                     password: newUser.password
                 })
                 toast.success(CONSTANTS.SUCCESSFULLY_SIGNED_UP)
-                // navigate(CONSTANTS.ENROUTE_LOGIN)
+                navigate(CONSTANTS.ENROUTE_LOGIN)
             } catch {
                 toast.error(CONSTANTS.SIGNUP_FAILED)
             }

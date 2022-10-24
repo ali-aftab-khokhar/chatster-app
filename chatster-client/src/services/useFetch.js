@@ -8,7 +8,7 @@ const useFetch = (url) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios.get(`/api/${url}`)
+      await axios.get(`http://localhost:5000/api/${url}`)
         .then((response) => {
           setData(response.data)
         })

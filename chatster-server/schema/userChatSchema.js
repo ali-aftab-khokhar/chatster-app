@@ -4,7 +4,6 @@ const userChatSchema = new mongoose.Schema({
     date: Date,
     userInfo: {
         displayName: String,
-        photoURL: String,
         uid: {
             type: Schema.Types.ObjectId,
             ref: 'user'
@@ -13,4 +12,4 @@ const userChatSchema = new mongoose.Schema({
 })
 
 const UserChat = mongoose.model('userChat', userChatSchema)
-module.export = UserChat
+module.exports = UserChat

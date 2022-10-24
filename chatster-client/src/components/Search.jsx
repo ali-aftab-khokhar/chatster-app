@@ -1,13 +1,13 @@
-import { collection, doc, getDocs, getDoc, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import React, { useState } from 'react'
 import CONSTANTS from '../constants'
-import { db } from '../firebase'
+import UserChatService from '../services/userChatService'
 import './style.css'
 
 const Search = () => {
     const [name, setName] = useState()
     const [user, setUser] = useState()
     const currentUser = JSON.parse(localStorage.getItem(CONSTANTS.USER_SCHEMA))
+    const userChatServiceObj = new UserChatService()
 
     const onchangeHandler = (e) => {
         e.preventDefault()
@@ -15,44 +15,25 @@ const Search = () => {
     }
 
     const handleSearch = async () => {
-        const q = query(collection(db, CONSTANTS.USERS_SCHEMA), where(CONSTANTS.DISPLAY_NAME_ENTITY, CONSTANTS.EQUALS_SIGN, name));
-        const querySnapshot = await getDocs(q)
-        querySnapshot.forEach((doc) => {
-            setUser(doc.data())
-        })
+        const users = await userChatServiceObj.getUsers({ displayName: name })
+        setUser(users.data)
     }
 
     const handleKey = (e) => {
         e.code === CONSTANTS.ENTER_KEY && handleSearch()
     }
 
-    const handleSelect = async () => {
+    const handleSelect = async (user) => {
         const combinedId =
-            currentUser.uid > user.uid
-                ? currentUser.uid + user.uid
-                : user.uid + currentUser.uid;
+            currentUser._id > user._id
+                ? currentUser._id + user._id
+                : user._id + currentUser._id;
         try {
-            const res = await getDoc(doc(db, CONSTANTS.CHATS_SCHEMA, combinedId));
-
-            if (!res.exists()) {
-                await setDoc(doc(db, CONSTANTS.CHATS_SCHEMA, combinedId), { messages: [] });
-                await updateDoc(doc(db, CONSTANTS.USER_CHATS_SCHEMA, currentUser.uid), {
-                    [combinedId + CONSTANTS.DOT_USER_INFO]: {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
-                    },
-                    [combinedId + CONSTANTS.DOT_DATE]: serverTimestamp(),
-                });
-                await updateDoc(doc(db, CONSTANTS.USER_CHATS_SCHEMA, user.uid), {
-                    [combinedId + CONSTANTS.DOT_USER_INFO]: {
-                        uid: currentUser.uid,
-                        displayName: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
-                    },
-                    [combinedId + CONSTANTS.DOT_DATE]: serverTimestamp(),
-                });
-            }
+            userChatServiceObj.createNewChat({
+                chatId: combinedId,
+                currentId: currentUser._id,
+                user: user._id
+            })
         } catch (err) { }
 
         setUser(null);
@@ -66,14 +47,17 @@ const Search = () => {
                 <label for="search">{CONSTANTS.SEARCH_FOR_USER}</label>
             </div>
 
-            {user && (
-                <div className="border-bottom" onClick={handleSelect}>
-                    <img src={user.photoURL} alt="" width="20%" classname="rounded-circle" />
-                    <div>
-                        <span>{user.displayName}</span>
-                    </div>
-                </div>
-            )}
+            {user ? (
+                user.map((u) => {
+                    return (
+                        <div className="border-bottom p-3" key={u._id} onClick={() => handleSelect(u)}>
+                            <div>
+                                <span>{u.displayName}</span>
+                            </div>
+                        </div>
+                    )
+                })
+            ) : null}
         </div>
     )
 }

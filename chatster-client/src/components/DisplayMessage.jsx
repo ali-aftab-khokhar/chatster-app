@@ -5,7 +5,7 @@ import './style.css'
 
 const DisplayMessage = (props) => {
     const context = useContext(ContextAPI)
-    const style = props.message.senderId === context.activeUser.uid ? CONSTANTS.STYLED_SENDER : CONSTANTS.STYLED_RECIEVER
+    const style = props.message.senderId === context.activeUser._id ? CONSTANTS.STYLED_SENDER : CONSTANTS.STYLED_RECIEVER
 
     return (
         <div>

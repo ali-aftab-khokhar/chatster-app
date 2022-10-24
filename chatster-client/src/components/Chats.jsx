@@ -1,60 +1,54 @@
-import { doc, onSnapshot } from 'firebase/firestore'
+/* eslint-disable react-hooks/exhaustive-deps */
 import CONSTANTS from '../constants'
 import React, { useEffect, useState } from 'react'
-import { db } from '../firebase'
 import './style.css'
+import UserChatService from '../services/userChatService'
+import { useContext } from 'react'
+import ContextAPI from '../context/contextAPI'
 
 const Chats = (props) => {
-    const [, setChats] = useState()
-    const [chatsArray, setChatsArray] = useState()
+    const [chats, setChats] = useState()
     const currentUser = JSON.parse(localStorage.getItem(CONSTANTS.USER_SCHEMA))
+    const userChatServiceObj = new UserChatService()
+    const context = useContext(ContextAPI)
 
     useEffect(() => {
-        const getChats = () => {
-            const unsub = onSnapshot(doc(db, CONSTANTS.USER_CHATS_SCHEMA, currentUser.uid), (doc) => {
-                setChats(doc.data());
-                setChatsArray(Object.entries(doc.data()))
-            });
+        const getData = async () => {
+            setChats(await userChatServiceObj.getChatsWithAllUsers(currentUser))
+        }
+        getData()
+    }, [])
 
-            return () => {
-                unsub();
-            };
-        };
-        currentUser.uid && getChats();
-    }, [currentUser.uid])
-
-    const selectChat = (chat) => {
-        const user = chat[1].userInfo
+    const selectChat = (user) => {
         const combinedId =
-            currentUser.uid > user.uid
-                ? currentUser.uid + user.uid
-                : user.uid + currentUser.uid;
+            currentUser._id > user._id
+                ? currentUser._id + user._id
+                : user._id + currentUser._id;
         localStorage.setItem(CONSTANTS.CHAT_WITH_USER_SCHEMA, JSON.stringify(user));
         localStorage.setItem(CONSTANTS.CURRENT_CHAT_SCHEMA, combinedId)
+        context.currentChat = combinedId
         props.rerenderChatSection(combinedId, user)
     }
 
     return (
         <div>
             {
-                chatsArray !== undefined ?
-                    chatsArray.map((chat) => {
+                chats !== undefined ?
+                    chats.data.map((chat) => {
                         return (
-                            <div className='p-3 d-flex mb-3 hoverEffect' key={chat[0]} onClick={() => selectChat(chat)}>
-                                <div className='bg-dark col-2 rounded-circle'>
-                                    <img src={chat[1].userInfo.photoURL} width='100%' alt='Profile' className='rounded-circle' ></img>
-                                </div>
+                            <div className='p-3 d-flex mb-3 hoverEffect' key={chat._id} onClick={() => selectChat(chat)}>
                                 <div className='d-grid gap-0 w-100 p-2 textLeft'>
                                     <div className='h5'>
-                                        {chat[1].userInfo.displayName}
+                                        {chat.displayName}
                                     </div>
                                     <div>
-                                        {chat[1].userInfo.lastMessage?.text ? chat[1].userInfo.lastMessage?.text : CONSTANTS.CLICK_HERE_TO_CHAT}
+                                        {CONSTANTS.CLICK_HERE_TO_CHAT}
                                     </div>
                                 </div>
                             </div>
                         )
-                    }) : <p>{CONSTANTS.LOADING}</p>
+                    }) 
+                    : <p>{CONSTANTS.LOADING}</p>
                 // })
             }
         </div>

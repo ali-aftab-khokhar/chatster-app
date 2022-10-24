@@ -4,8 +4,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import CONSTANTS from '../constants';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase"
 import { auth as loginAuth } from '../auth'
 import { toast } from 'react-toastify';
 import ContextAPI from '../context/contextAPI';
@@ -22,7 +20,7 @@ const Login = () => {
     const UserServiceObj = new UserService()
 
     useEffect(() => {
-        if (loginAuth()){
+        if (loginAuth()) {
             navigate(CONSTANTS.ENROUTE_HOME)
         }
     }, [navigate])
@@ -50,20 +48,14 @@ const Login = () => {
 
     const onSubmitHandler = async (e) => {
         const user = await UserServiceObj.loginUser(credentials)
-        context.activeUser = user
-        console.log(context)
-        // signInWithEmailAndPassword(auth, credentials.email, credentials.password)
-        //     .then((userCredential) => {
-        //         const user = userCredential.user;
-        //         localStorage.setItem(CONSTANTS.USER_SCHEMA, JSON.stringify(user))
-        //         context.activeUser = JSON.parse((localStorage.getItem(CONSTANTS.USER_SCHEMA)))
-        //         toast.success(CONSTANTS.SUCCESSFULLY_LOGGED_IN)
-        //         navigate(CONSTANTS.ENROUTE_HOME)
-        //     })
-        //     .catch((error) => {
-        //         var err = error.message.substr(error.message.indexOf(" ") + 1);
-        //         toast.error(err)
-        //     });
+        if (user) {
+            context.activeUser = user
+            localStorage.setItem('user', JSON.stringify(user))
+            navigate('/home')
+            toast.success(CONSTANTS.SUCCESSFULLY_LOGGED_IN)
+        } else {
+            toast.error(CONSTANTS.LOGIN_FAILED)
+        }
     }
 
     const navigateToRegister = () => {

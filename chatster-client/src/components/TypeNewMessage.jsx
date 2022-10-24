@@ -1,27 +1,27 @@
-import { arrayUnion, doc, Timestamp, updateDoc } from 'firebase/firestore'
 import React, { useContext, useState } from 'react'
 import ContextAPI from '../context/contextAPI'
-import { db } from '../firebase'
-import { v4 as uuid } from 'uuid'
 import './style.css'
 import CONSTANTS from '../constants'
+import UserChatService from '../services/userChatService'
 
 const TypeNewMessage = () => {
     const [message, setMessage] = useState('')
     const context = useContext(ContextAPI)
+    const currentChat = localStorage.getItem('currentChat')
+    const userChatServiceObj = new UserChatService()
 
     const onChangeHandler = (e) => {
         setMessage(e.target.value)
     }
 
     const onSubmitHandler = async () => {
-        await updateDoc(doc(db, CONSTANTS.CHATS_SCHEMA, context.currentChat), {
-            messages: arrayUnion({
-                id: uuid(),
+        userChatServiceObj.addNewChatMessage({
+            chatId: currentChat,
+            messages: {
+                senderId: context.activeUser._id,
                 text: message,
-                senderId: context.activeUser.uid,
-                time: Timestamp.now()
-            })
+                time: new Date()
+            }
         })
         setMessage('')
     }

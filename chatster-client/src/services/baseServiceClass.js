@@ -4,7 +4,7 @@ import CONSTANTS from '../constants'
 const API = 'http://localhost:5000/api'
 
 class BaseServiceClass {
-  putMethod (payload, success, error, url) {
+  putMethod(payload, success, error, url) {
     try {
       axios.put(`${API}/${url}`, payload)
         .then((res) => {
@@ -19,7 +19,7 @@ class BaseServiceClass {
     }
   }
 
-  deleteMethod (url, error) {
+  deleteMethod(url, error) {
     try {
       axios.delete(`${API}/${url}`)
         .then((res) => {
@@ -34,7 +34,7 @@ class BaseServiceClass {
     }
   }
 
-  async postMethod (payload, success, error, url = '') {
+  async postMethod(payload, success, error, url = '') {
     try {
       await axios.post(`${API}/${url}`, payload)
         .then((res) => {
@@ -51,7 +51,15 @@ class BaseServiceClass {
     }
   }
 
-  async specialPostMethod (credentials) {
+  async searchUser(payload, url = '') {
+    try {
+      return await (axios.post(`${API}/${url}`, payload))
+    } catch {
+      toast.error(CONSTANTS.INCORRECT_EMAIL_OR_PASSWORD)
+    }
+  }
+
+  async specialPostMethod(credentials) {
     try {
       return await (axios.post(`${API}`, credentials))
     } catch {
@@ -59,8 +67,16 @@ class BaseServiceClass {
     }
   }
 
-  async logoutMethod () {
+  async logoutMethod() {
     await axios.get('/api/logout')
+  }
+
+  async getMethod(url) {
+    try {
+      return await (axios.get(`${API}/${url}`))
+    } catch {
+
+    }
   }
 }
 
